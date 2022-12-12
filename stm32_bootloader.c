@@ -13,24 +13,7 @@
  
 #include "stm32_bootloader.h"
 
-void startBootloader(void);
 
-
-void resetSTM(void);
-
-
-#if (BOOTLOADER_PORT==BOOTLOADER_UART)
-pRESULT bootloaderSync(void);
-#endif
-pRESULT bootloaderGet(void);
-pRESULT bootloaderVersion(void);
-pRESULT bootloaderId(void);
-pRESULT bootloaderExtErase(void);
-pRESULT bootloaderErasePages(uint16_t startPageIdx, uint16_t pageNum);
-pRESULT bootloaderWrite(void);
-pRESULT bootloaderRead(void);
-pRESULT bootloaderReleaseMemProtect(void);
-pRESULT loadAddress(const uint8_t * address);
 pRESULT sendBytesWithAck(const uint8_t *bytes, int count, int len, int timeoutInMs);
 
  /**
@@ -40,7 +23,7 @@ pRESULT sendBytesWithAck(const uint8_t *bytes, int count, int len, int timeoutIn
   */
 pRESULT incrementLoadAddress(uint8_t *loadAddr, uint16_t len);
 
-
+pRESULT loadAddress(const uint8_t * address);
 
 void resetSTM(void)
 {
@@ -68,6 +51,13 @@ void endBootloader(void)
 
 pRESULT checkAndEraseSTM(void)
 {
+  /* 
+    Define How much flash you want to erase
+    For STM32L432, flash size =  eraseLoopNum*sectorsPerLoop*2k 
+  */
+    uint16_t eraseLoopNum = 9;
+    uint16_t sectorsPerLoop =4;
+    
     startBootloader();
     platform_delay_ms(1000);
 #if (BOOTLOADER_PORT==BOOTLOADER_UART)
@@ -85,15 +75,17 @@ pRESULT checkAndEraseSTM(void)
     if(bootloaderId()!=RES_OK){
     	return RES_FAIL;
     }
+    /*Uncomment this command if flash is protected */
 //    if(bootloaderReleaseMemProtect()!=RES_OK){
 //      return RES_FAIL;
 //    }
+    /*Complete erase has not been verified */
 //    if(bootloaderExtErase()!=RES_OK){
 //    	return RES_FAIL;
 //    }
     platform_delay_ms(1000);
-    for(int i = 0;i< 1;i++){
-      if(bootloaderErasePages(i*4+0,4)!=RES_OK){
+    for(int i = 0;i< eraseLoopNum;i++){  
+      if(bootloaderErasePages(i*sectorsPerLoop+0,sectorsPerLoop)!=RES_OK){
         return RES_FAIL;
       }
 #ifdef ENABLE_DEBUG_LOG
@@ -130,8 +122,10 @@ pRESULT bootloaderGet(void)
   }
   uint8_t tmpData[13];
   res = platform_read_with_timeout( tmpData, 13,1000);
+#ifdef ENABLE_DEBUG_LOG
   LogDebugInfo( ("Slave MCU IAP: bootloader version:"));
   LogDebugInfoHEX( tmpData[1]);
+#endif
   res = platform_read_with_timeout( tmpData, 1,1000);
   return res;
 }
@@ -414,18 +408,6 @@ pRESULT flashSlavePage(const uint8_t *address, const uint8_t *dataBuf,uint16_t l
   
   bootloaderWrite();
   loadAddress(address);
-//#ifdef ENABLE_DEBUG_LOG
-//   LogDebugInfo( ("Slave MCU IAP: send data to flash"));
-//#endif
-//  uint8_t xor = 0xFF;
-//  uint8_t sz = 0xFF;
-//  platform_write( &sz, 1);
-//  for (int i = 0; i < 256; i++)
-//  {
-//  	platform_write( &dataBuf[i], 1);
-//    xor ^= dataBuf[i];
-//  }
-//  platform_write( &xor, 1);
 
   platform_write( tx_data, writeNum+3);
 

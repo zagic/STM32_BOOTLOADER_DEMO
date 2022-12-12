@@ -30,12 +30,13 @@ extern "C" {
 #define   BOOTLOADER_I2C           0
 #define   BOOTLOADER_UART          1
 
+/***** choose bootloader type here  *****/
+#define BOOTLOADER_PORT        BOOTLOADER_UART        
 
-#define BOOTLOADER_PORT        BOOTLOADER_UART         
 #define ENABLE_DEBUG_LOG 
 
 #if (BOOTLOADER_PORT==BOOTLOADER_I2C )
-  #define DEVICE_IIC_ADDRESS          0x48
+  #define DEVICE_IIC_ADDRESS          0x48  //check STM32 AN2606 for the IIC address for eath device model 
 #elif  (BOOTLOADER_PORT==BOOTLOADER_UART )
   
 #endif

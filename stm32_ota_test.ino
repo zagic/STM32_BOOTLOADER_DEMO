@@ -17,7 +17,7 @@
  *      
  *      #endif  //__CREDENTIALS_H
 */
-#define DUMMY_TEST
+//#define DUMMY_TEST
 
 #ifndef DUMMY_TEST
 #include "credentials.h"
@@ -131,16 +131,21 @@ void downloadFromHTTP(void){
           }
           delay(1);
       }
+      file.flush();
     }else{
       Serial.println("http get error");
+      file.close();
+      Serial.println("download failed");
+      http.end(); // Free the resources
     }
-    file.close();
-    
-    Serial.println("you have finished downloading");
+
     Serial.print(FILE_PATH_NAME); Serial.print(" size : ");Serial.println(file.size());
+    file.close();
+    Serial.println("download finished");
     http.end(); // Free the resources
   }else{
     file.close();
+    Serial.println("no internet, download failed");
   }
   
  
@@ -157,6 +162,8 @@ void initSPIFFS(void){
   }
   Serial.println("SPIFFS OK!");
 }
+
+
 
 void testSPIFFS(void){
   file = SPIFFS.open(FILE_PATH_NAME, FILE_WRITE);

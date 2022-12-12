@@ -59,7 +59,9 @@ pRESULT platform_read_with_timeout( uint8_t *bufp, uint16_t len,int timeout ){
   Wire.requestFrom((uint16_t)DEVICE_IIC_ADDRESS, (size_t)len);
   int num =0;
   while(Wire.available()<len && (millis()< timeEnd ) ){
+#ifdef ENABLE_DEBUG_LOG
       Serial.print("IIC available ");Serial.println(num);
+#endif
       platform_delay_ms(100);
 //      Wire.requestFrom((uint16_t)DEVICE_IIC_ADDRESS, (size_t)len);
   }
@@ -72,7 +74,9 @@ pRESULT platform_read_with_timeout( uint8_t *bufp, uint16_t len,int timeout ){
   }else{
     for(int i = 0;i<num;i++){
       bufp[i] = Wire.read();
+#ifdef ENABLE_DEBUG_LOG
       Serial.println(bufp[i],HEX);
+#endif
     }
 #ifdef ENABLE_DEBUG_LOG
     Serial.print("IIC available (less)");Serial.println(num);
@@ -83,7 +87,7 @@ pRESULT platform_read_with_timeout( uint8_t *bufp, uint16_t len,int timeout ){
 #elif (BOOTLOADER_PORT==BOOTLOADER_UART)
   int l = 0;
   while(Serial1.available() < len && (millis()< timeEnd ) ){
-    platform_delay_ms(1000);
+    platform_delay_ms(100);
   }
   l=Serial1.available();
   if( l==len){

@@ -41,11 +41,49 @@ pRESULT flashSlavePage(const uint8_t *address, const uint8_t *data,uint16_t len)
   */
 pRESULT verifySlavePage(const uint8_t *address, const uint8_t *data,uint16_t len);
 
+
+/**
+* @brief  read and print some useful information,erase sectors. You may adjust the sectors num based your firmware size
+* @retval RES_OK or RES_FAIL
+*/
 pRESULT checkAndEraseSTM(void);
 
+/**
+* @brief tongle pins to start bootloader
+*/
+void startBootloader(void);
+/**
+* @brief tongle reset pin to restart device
+*/
+void resetSTM(void);
 
-
+/**
+* @brief tongle pins to end bootloader and start program
+*/
 void endBootloader(void);
+
+#if (BOOTLOADER_PORT==BOOTLOADER_UART)
+pRESULT bootloaderSync(void);
+#endif
+pRESULT bootloaderGet(void);
+pRESULT bootloaderVersion(void);
+pRESULT bootloaderId(void);
+pRESULT bootloaderWrite(void);
+pRESULT bootloaderRead(void);
+pRESULT bootloaderReleaseMemProtect(void);
+pRESULT bootloaderExtErase(void);//not verified
+ /**
+  * @brief Erase continuous sectors, in STM32L432, sectors are all in 2K, 
+  * @param  startPageIdx          start sector/page index
+  * @param  pageNum               page/sector num in total (recomend to erase 1-4 sectors at a time, have not verified more sectors)
+  * @retval RES_OK or RES_FAIL
+  */
+pRESULT bootloaderErasePages(uint16_t startPageIdx, uint16_t pageNum);
+
+
+
+
+
 
 #ifdef __cplusplus
 }
