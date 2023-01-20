@@ -57,6 +57,8 @@ Other issues:
 
 >The GND of master device and STM32 slave device is suggested to be directly connected. The IAP may fail even if they both connect to the same PC via USB.
 
+>Right now, the code only erase the first a few sectors of the STM32 flash. Customize how much size of the flash need to be erased in stm32_bootloader.c/pRESULT checkAndEraseSTM(void) 
+
 # Bootloader protocol
 In our test, 
 

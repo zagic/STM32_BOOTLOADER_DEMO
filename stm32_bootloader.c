@@ -55,7 +55,7 @@ pRESULT checkAndEraseSTM(void)
     Define How much flash you want to erase
     For STM32L432, flash size =  eraseLoopNum*sectorsPerLoop*2k 
   */
-    uint16_t eraseLoopNum = 9;
+    uint16_t eraseLoopNum = 10;  //up to 30
     uint16_t sectorsPerLoop =4;
     
     startBootloader();

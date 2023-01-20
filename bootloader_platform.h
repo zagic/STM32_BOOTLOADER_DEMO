@@ -31,7 +31,7 @@ extern "C" {
 #define   BOOTLOADER_UART          1
 
 /***** choose bootloader type here  *****/
-#define BOOTLOADER_PORT        BOOTLOADER_UART        
+#define BOOTLOADER_PORT        BOOTLOADER_UART       
 
 #define ENABLE_DEBUG_LOG 
 
